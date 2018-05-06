@@ -2,6 +2,11 @@
 Tsp-Algo is a genetic algorithm that finds the shortest path between an array of lat/long values.
 
 ## Usage
+Tsp-Algo uses ES6, Webpack, Babel, Jest and ESLint. Webpack is used to build and minify the source 
+into the bundle.js file found in build/dist/bundle.js. For more information on these, or to use the 
+boilerlate I have made as a template for your own project, check it out here https://github.com/James-Curran/pure-es6-boilerplate
+
+### Implementation
 Look at src/index.js for an example implementation
 * Create a Tsp object from the tsp.js class
 ```

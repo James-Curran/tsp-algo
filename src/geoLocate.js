@@ -8,7 +8,7 @@ export class GeoLocate {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(this.showPosition);
         } else {
-            alert("Geolocation is not supported by this browser.");
+            alert('Geolocation is not supported by this browser.');
         }
     }
 

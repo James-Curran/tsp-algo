@@ -1,5 +1,8 @@
+const webpack = require('webpack');
+
+
 module.exports = {
-    devtool: 'source-map',
+    devtool: 'eval-source-map',
     entry: __dirname + '/src/index.js',
     output: {
         path: __dirname + '/build/dist',
@@ -10,12 +13,12 @@ module.exports = {
         rules: [
             {
                 test: /\.jsx?$/,
-                enforce: "pre",
-                loader: "eslint-loader",
+                enforce: 'pre',
+                loader: 'eslint-loader',
                 exclude: /node_modules/,
                 options: {
                     emitWarning: true,
-                    configFile: "./.eslintrc"
+                    configFile: './.eslintrc'
                 }
             },
             {
@@ -24,5 +27,8 @@ module.exports = {
                 use: 'babel-loader'
             }
         ]
-    }
+    },
+    plugins: [
+        new webpack.optimize.UglifyJsPlugin()
+    ]
 };

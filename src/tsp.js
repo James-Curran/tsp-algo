@@ -125,22 +125,29 @@ export class Tsp {
         }
     }
 
-    // Simple this.swap function
-    swap(a, i, j) {
-        const temp = a[i];
-        a[i] = a[j];
-        a[j] = temp;
+    // Simple swap function
+    swap(array, index1, index2) {
+        if (array && array.length) {
+            const temp = array[index1];
+            array[index1] = array[index2];
+            array[index2] = temp;
+        }
+
     }
 
-    //  Calculates the this.desirability for every this.population dustrubution
+    setRecord(distance, index) {
+        if(distance < this.record) {
+            this.record = distance;
+            this.bestOrder = this.population[index];
+        }
+    }
+
+    //  Calculates the desirability for every population distribution
     getDesirability() {
         for(let i = 0; i < this.populationDensity; i += 1) {
             const distance = this.findTotalDistance(this.pointDist, this.population[i]);
-            // Sets this.record to the shortest distance and this.bestOrder to the this.population that spwaned that distance
-            if(distance < this.record) {
-                this.record = distance;
-                this.bestOrder = this.population[i];
-            }
+            // Sets record to the shortest distance and bestOrder to the population that spwaned that distance
+            this.setRecord(distance, i);
             /* Multiplies the distance to the power 12 to increase the difference between good distances and bad ones, making good ones a lot
             more likely as they will take up a much bigger percentage of the overally this.desirability, which is used to determine its probability.
             Dividing by one inverts the number (because we want the smallest distance to be the most likely and therefore highest number)
@@ -149,14 +156,14 @@ export class Tsp {
         }
     }
 
-    // Turns the this.desirability values into the percentage of the total this.desirability
+    // Turns the desirability values into the percentage of the total desirability
     normalizeDesirability() {
         // Adds up all of the this.desirability values
         let sum = 0;
         for(let i = 0; i < this.populationDensity; i += 1) {
             sum = sum + this.desirability[i];
         }
-        // Transforms each value into it's relevant percentage of the total this.desirability
+        // Transforms each value into it's relevant percentage of the total desirability
         for(let i = 0; i < this.populationDensity; i += 1) {
             this.desirability[i] = this.desirability[i] / sum;
         }

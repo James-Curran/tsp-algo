@@ -1,5 +1,4 @@
 export class Tsp {
-
     constructor() {
         this.pointDist = [];
         this.pointLocations = [];

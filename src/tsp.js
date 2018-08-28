@@ -31,12 +31,6 @@ export class Tsp {
             this.normalizeDesirability();
             this.nextGeneration();
 
-            // Logs the this.record and best order of each generation. Used only to
-            // demonstrate algorithm. Will be removed before release
-            console.log(`Generation Number: ${i + 1}`);
-            console.log(`Record Distance: ${this.record}m`);
-            console.log(`Order of Points: ${this.bestOrder}`);
-            console.log('------------------------------------');
             this.chartBestRecords[i] = [];
             this.chartBestRecords[i][0] = (`Generation ${i}`);
             this.chartBestRecords[i][1] = this.record * -1;
@@ -141,11 +135,10 @@ export class Tsp {
             array[index1] = array[index2];
             array[index2] = temp;
         }
-
     }
 
     setRecord(distance, index) {
-        if(distance < this.record) {
+        if (distance < this.record) {
             this.record = distance;
             this.bestOrder = this.population[index];
         }
@@ -157,11 +150,8 @@ export class Tsp {
             const distance = this.findTotalDistance(this.pointDist, this.population[i]);
             // Sets record to the shortest distance and bestOrder to the population spwaned it
             this.setRecord(distance, i);
-            /* Multiplies the distance to the power 12 to increase the difference between good distances and bad ones, making good ones a lot
-            more likely as they will take up a much bigger percentage of the overally this.desirability, which is used to determine its probability.
-            Dividing by one inverts the number (because we want the smallest distance to be the most likely and therefore highest number)
-            Adding one is there incase the distance is ever 0 and we get a nasty error, not likely but better safe than sorry! */
-            this.desirability[i] = 1 / (Math.pow(distance, 12) + 1);
+            // Puts number to the power 12 to exacerbate the difference between good and bad gens
+            this.desirability[i] = 1 / ((distance ** 12) + 1);
         }
     }
 
@@ -173,7 +163,7 @@ export class Tsp {
             sum += this.desirability[i];
         }
         // Transforms each value into it's relevant percentage of the total desirability
-        for(let i = 0; i < this.populationDensity; i += 1) {
+        for (let i = 0; i < this.populationDensity; i += 1) {
             this.desirability[i] = this.desirability[i] / sum;
         }
     }
@@ -201,8 +191,8 @@ export class Tsp {
         const newPopulation = [];
         for (let i = 0; i < this.population.length; i += 1) {
             // Gets two of the best populations and then crosses them over
-            const orderA = this.pickOne(this.population, this.desirability);
-            const orderB = this.pickOne(this.population, this.desirability);
+            const orderA = this.chooseDesirable(this.population, this.desirability);
+            const orderB = this.chooseDesirable(this.population, this.desirability);
             const order = this.crossOver(orderA, orderB);
             // Mutate at a rate of 8.5%
             this.mutate(order, 0.085);
@@ -211,21 +201,18 @@ export class Tsp {
         this.population = newPopulation;
     }
 
-    /* Picks a random number from 0.0 - 1. Subtracts the this.desirability score (now percentage of total this.desirability remember) from the generated
-    number. This results in the scores with the highest this.desirability score having the highest probability to trigger the switch from r > 0
-    Each score has a chance of triggering r to become negative directly relational to it's this.desirability score. */
-    pickOne(list) {
+    // Picks a random number 0 - 1 and starts subtracting desirability
+    chooseDesirable(list) {
         let index = 0;
         let r = Math.random(1);
         // While r is still a positive number, keep subtracting the next this.desirability index
-        // until it becomes negative
         while (r > 0) {
             r -= this.desirability[index];
             index += 1;
         }
         // Compensates for the final unnecessary index increment
         index -= 1;
-        // Return the corresponding order from the successful this.desirability value
+        // Return the desirability that caused r to go negative
         return list[index].slice();
     }
 

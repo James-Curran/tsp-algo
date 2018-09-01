@@ -1,5 +1,4 @@
-export class GeoLocate {
-
+export default class GeoLocate {
     constructor() {
         this.latLongValues = [];
     }
@@ -13,14 +12,11 @@ export class GeoLocate {
     }
 
     showPosition(position) {
-
         this.latLongValues[0] = position.coords.latitude;
         this.latLongValues[1] = position.coords.longitude;
-
     }
 
-    getLocationArray(){
+    getLocationArray() {
         return this.latLongValues;
     }
 }
-

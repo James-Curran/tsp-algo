@@ -1,4 +1,4 @@
-export class Tsp {
+export default class Tsp {
     constructor() {
         this.pointDist = [];
         this.pointLocations = [];
@@ -50,7 +50,7 @@ export class Tsp {
         // fill our this.population with
         for (let i = 0; i < this.populationDensity; i += 1) {
             this.population[i] = order.slice();
-            this.shufflePop(this.population[i], 100);
+            this.population[i] = Tsp.shufflePop(this.population[i], 100);
         }
     }
 
@@ -75,7 +75,7 @@ export class Tsp {
         for (let i = 0; i < this.pointLocations.length; i += 1) {
             this.pointDist[i] = [];
             for (let j = 0; j < this.pointLocations.length; j += 1) {
-                this.pointDist[i][j] = this.latDist(
+                this.pointDist[i][j] = Tsp.latDist(
                     this.pointLocations[i][0],
                     this.pointLocations[i][1],
                     this.pointLocations[j][0],
@@ -103,37 +103,41 @@ export class Tsp {
 
     /* Credit to http:// www.movable-type.co.uk/scripts/latlong.html for the algorithm, slightly modified to fit our purposes
     Find the distance between two points given their lognitudinal and latitudinal coordinates */
-    latDist(lat1, lon1, lat2, lon2) {
+    static latDist(lat1, lon1, lat2, lon2) {
         const R = 6371; //  Radius of the earth in km
-        const dLat = this.deg2rad(lat2 - lat1); // this.deg2rad below
-        const dLon = this.deg2rad(lon2 - lon1);
-        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(this.deg2rad(lat1))
-            * Math.cos(this.deg2rad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const dLat = Tsp.deg2rad(lat2 - lat1); // Tsp.deg2rad below
+        const dLon = Tsp.deg2rad(lon2 - lon1);
+        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(Tsp.deg2rad(lat1))
+            * Math.cos(Tsp.deg2rad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         return R * c * 1000; //  Distance in meters
     }
 
     // Converts degrees to radians
-    deg2rad(deg) {
+    static deg2rad(deg) {
         return deg * (Math.PI / 180);
     }
 
     // Simple shuffle to mix around the this.population
-    shufflePop(pop, numTimes) {
+    static shufflePop(pop, numTimes) {
+        let shuffledPop = pop;
         for (let i = 0; i < numTimes; i += 1) {
             const indexA = Math.floor(Math.random() * pop.length);
             const indexB = Math.floor(Math.random() * pop.length);
-            this.swap(pop, indexA, indexB);
+            shuffledPop = Tsp.swap(pop, indexA, indexB);
         }
+        return shuffledPop;
     }
 
     // Simple swap function
-    swap(array, index1, index2) {
-        if (array && array.length) {
-            const temp = array[index1];
-            array[index1] = array[index2];
-            array[index2] = temp;
+    static swap(array, index1, index2) {
+        const swappedArray = array;
+        if (swappedArray && swappedArray.length) {
+            const temp = swappedArray[index1];
+            swappedArray[index1] = swappedArray[index2];
+            swappedArray[index2] = temp;
         }
+        return swappedArray;
     }
 
     setRecord(distance, index) {
@@ -168,7 +172,7 @@ export class Tsp {
     }
 
     // Creates a cross over of two arrays of orders
-    crossOver(orderA, orderB) {
+    static crossOver(orderA, orderB) {
         /* Generates a random start and end point, ensuring that the end is after the start. .slice
         makes it so we can go passed the last index of the order without getting an error. */
         const start = Math.floor(Math.random() * orderA.length);
@@ -192,9 +196,9 @@ export class Tsp {
             // Gets two of the best populations and then crosses them over
             const orderA = this.chooseDesirable(this.population, this.desirability);
             const orderB = this.chooseDesirable(this.population, this.desirability);
-            const order = this.crossOver(orderA, orderB);
+            let order = Tsp.crossOver(orderA, orderB);
             // Mutate at a rate of 8.5%
-            this.mutate(order, 0.085);
+            order = this.mutate(order, 0.085);
             newPopulation[i] = order;
         }
         this.population = newPopulation;
@@ -217,14 +221,16 @@ export class Tsp {
 
     // Mutates a given order by a given % mutation rate
     mutate(order, mutationRate) {
+        let mutatedOrder = order;
         for (let i = 0; i < this.totalpoints; i += 1) {
             // in mutationRate % of cases this happens
             if (Math.random(1) < mutationRate) {
                 // Swaps two random elements in the array
                 const indexA = Math.floor(Math.random() * this.totalpoints);
                 const indexB = (indexA + 1) % this.totalpoints;
-                this.swap(order, indexA, indexB);
+                mutatedOrder = Tsp.swap(mutatedOrder, indexA, indexB);
             }
         }
+        return mutatedOrder;
     }
 }

@@ -1,4 +1,4 @@
-import { Tsp } from '../tsp';
+import Tsp from '../tsp';
 
 let tsp = new Tsp();
 

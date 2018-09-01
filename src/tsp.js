@@ -41,10 +41,7 @@ export default class Tsp {
 
     initialSetup() {
         // Creates a default initial linear order - 0, 1, 2, 3..
-        const order = [];
-        for (let i = 0; i < this.totalpoints; i += 1) {
-            order[i] = i;
-        }
+        const order = Tsp.createLinearArray(this.totalpoints);
 
         // Shuffles the linear order into the required amount of random arrays to initially
         // fill our this.population with
@@ -52,6 +49,10 @@ export default class Tsp {
             this.population[i] = order.slice();
             this.population[i] = Tsp.shufflePop(this.population[i], 100);
         }
+    }
+
+    static createLinearArray(size) {
+        return Array.from(Array(size + 1).keys());
     }
 
     // Draws chart showing performance of algorithm by generation
@@ -120,24 +121,25 @@ export default class Tsp {
 
     // Simple shuffle to mix around the this.population
     static shufflePop(pop, numTimes) {
-        let shuffledPop = pop;
+        let shuffledPop = pop.slice();
         for (let i = 0; i < numTimes; i += 1) {
             const indexA = Math.floor(Math.random() * pop.length);
             const indexB = Math.floor(Math.random() * pop.length);
-            shuffledPop = Tsp.swap(pop, indexA, indexB);
+            shuffledPop = Tsp.swap(shuffledPop, indexA, indexB);
         }
         return shuffledPop;
     }
 
     // Simple swap function
     static swap(array, index1, index2) {
-        const swappedArray = array;
-        if (swappedArray && swappedArray.length) {
+        if (array && array.length) {
+            const swappedArray = array.slice();
             const temp = swappedArray[index1];
             swappedArray[index1] = swappedArray[index2];
             swappedArray[index2] = temp;
+            return swappedArray;
         }
-        return swappedArray;
+        return [];
     }
 
     setRecord(distance, index) {
@@ -221,7 +223,7 @@ export default class Tsp {
 
     // Mutates a given order by a given % mutation rate
     mutate(order, mutationRate) {
-        let mutatedOrder = order;
+        let mutatedOrder = order.slice();
         for (let i = 0; i < this.totalpoints; i += 1) {
             // in mutationRate % of cases this happens
             if (Math.random(1) < mutationRate) {

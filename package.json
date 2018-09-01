@@ -37,5 +37,8 @@
     "uglifyjs-webpack-plugin": "^1.2.5",
     "webpack": "^2.4.1",
     "webpack-dev-server": "^2.4.2"
-  }
+  },
+    "jest": {
+        "testURL": "http://localhost.com"
+    }
 }
